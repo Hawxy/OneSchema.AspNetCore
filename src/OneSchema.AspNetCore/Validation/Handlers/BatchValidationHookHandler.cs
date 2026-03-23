@@ -3,28 +3,23 @@
 namespace OneSchema.AspNetCore.Validation.Handlers;
 
 /// <summary>
-/// Convenient base class for validation hooks that need access to all strongly-typed rows
-/// at once (e.g. cross-row uniqueness checks, batch database lookups).
+/// Convenient base class for validation hooks that need access to all rows at once
+/// (e.g. cross-row uniqueness checks, batch database lookups).
 /// <para>
 /// Example:
 /// <code>
-/// public class ProductRow
-/// {
-///     [JsonPropertyName("code")]
-///     public string Code { get; set; }
-/// }
-///
-/// public class UniquenessValidator : BatchValidationHookHandler&lt;ProductRow&gt;
+/// public class UniquenessValidator : BatchValidationHookHandler
 /// {
 ///     protected override Task ValidateAsync(
-///         ValidationHookRequest&lt;ProductRow&gt; request,
+///         ValidationHookRequest request,
 ///         ValidationResultBuilder results,
 ///         CancellationToken cancellationToken)
 ///     {
 ///         var seen = new HashSet&lt;string&gt;();
 ///         foreach (var row in request.Rows)
 ///         {
-///             if (row.Values.Code is not null &amp;&amp; !seen.Add(row.Values.Code))
+///             var code = row.GetValue("code");
+///             if (code is not null &amp;&amp; !seen.Add(code))
 ///                 results.ForRow(row).Error("code", "Duplicate code");
 ///         }
 ///         return Task.CompletedTask;
@@ -33,17 +28,11 @@ namespace OneSchema.AspNetCore.Validation.Handlers;
 /// </code>
 /// </para>
 /// </summary>
-/// <typeparam name="TValues">
-/// A class whose properties map to template column keys.
-/// Use <see cref="System.Text.Json.Serialization.JsonPropertyNameAttribute"/> to control mapping.
-/// By default, <c>snake_case</c> naming policy is used.
-/// </typeparam>
-public abstract class BatchValidationHookHandler<TValues> : IValidationHookHandler<TValues>
-    where TValues : class
+public abstract class BatchValidationHookHandler : IValidationHookHandler
 {
     /// <inheritdoc />
     public async Task<ValidationHookResponseItem[]> HandleAsync(
-        ValidationHookRequest<TValues> request,
+        ValidationHookRequest request,
         CancellationToken cancellationToken = default)
     {
         var results = new ValidationResultBuilder();
@@ -52,13 +41,11 @@ public abstract class BatchValidationHookHandler<TValues> : IValidationHookHandl
     }
 
     /// <summary>
-    /// Override to perform batch validation across all strongly-typed rows.
+    /// Override to perform batch validation across all rows.
     /// Use the <paramref name="results"/> builder to report errors and warnings.
     /// </summary>
     protected abstract Task ValidateAsync(
-        ValidationHookRequest<TValues> request,
+        ValidationHookRequest request,
         ValidationResultBuilder results,
         CancellationToken cancellationToken);
 }
-
-
