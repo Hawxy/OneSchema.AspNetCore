@@ -5,7 +5,7 @@ namespace OneSchema.AspNetCore.Api;
 /// <summary>
 /// Base class containing the shared metadata properties of a OneSchema validation hook request.
 /// </summary>
-public abstract class ValidationHookRequestBase
+public abstract class ValidationHookRequestBase : IOneSchemaWebhookRequest
 {
     /// <summary>
     /// Ordered array of mapped columns. Used for referencing custom columns.

@@ -38,7 +38,7 @@ public static class ValidationHookEndpointExtensions
     /// <see cref="ValidationHookRequest"/>, dispatches it to <typeparamref name="THandler"/>,
     /// and returns the <see cref="ValidationHookResponseItem"/>[] result as JSON.
     /// </summary>
-    public static IEndpointConventionBuilder MapValidationHook<THandler>(
+    public static RouteHandlerBuilder MapValidationHook<THandler>(
         this IEndpointRouteBuilder endpoints,
         string pattern)
         where THandler : class, IValidationHookHandler
@@ -59,7 +59,7 @@ public static class ValidationHookEndpointExtensions
     /// dispatches it to <typeparamref name="THandler"/>,
     /// and returns the <see cref="ValidationHookResponseItem"/>[] result as JSON.
     /// </summary>
-    public static IEndpointConventionBuilder MapValidationHook<THandler, TValues>(
+    public static RouteHandlerBuilder MapValidationHook<THandler, TValues>(
         this IEndpointRouteBuilder endpoints,
         string pattern)
         where THandler : class, IValidationHookHandler<TValues>

@@ -1,44 +1,29 @@
-using System.Text.Json;
+using OneSchema.AspNetCore.Authentication;
+using OneSchema.AspNetCore.Validation;
+using OneSchemaSandbox.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Register handlers
+builder.Services.AddValidationHookHandler<ContactValidationHandler, ContactRow>();
+builder.Services.AddValidationHookHandler<ProductUniquenessHandler, ProductRow>();
+
+// Configure optional JWT validation
+builder.Services.AddOneSchemaJwtValidation(opts =>
+{
+    opts.ClientId = builder.Configuration["OneSchema:ClientId"] ?? "test-client-id";
+    opts.ClientSecret = builder.Configuration["OneSchema:ClientSecret"] ?? "super-secret-key-that-is-long-enough-for-hmac";
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+// Map validation hook endpoints
+app.MapValidationHook<ContactValidationHandler, ContactRow>("/webhooks/validate-contacts")
+    .RequireOneSchemaJwtValidation();
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
-
+app.MapValidationHook<ProductUniquenessHandler, ProductRow>("/webhooks/validate-products");
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+// Required for Alba / WebApplicationFactory test access
+public partial class Program;

@@ -6,7 +6,7 @@ namespace OneSchema.AspNetCore.Api;
 /// <summary>
 /// Represents the JSON POST request body sent by OneSchema for an export webhook.
 /// </summary>
-public class ExportWebhookRequest
+public class ExportWebhookRequest : IOneSchemaWebhookRequest
 {
     /// <summary>
     /// A unique ID for this webhook request.
