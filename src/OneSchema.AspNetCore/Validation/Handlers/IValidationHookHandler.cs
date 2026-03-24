@@ -4,9 +4,7 @@ namespace OneSchema.AspNetCore.Validation.Handlers;
 
 /// <summary>
 /// Defines a handler for processing OneSchema validation hook requests.
-/// Implement this interface directly for full control over the validation flow (e.g. batch
-/// database lookups, cross-row validation). For simple per-row validation, inherit from
-/// <see cref="RowValidationHookHandler"/> instead.
+/// Implement this interface directly for full control over the validation flow.
 /// </summary>
 public interface IValidationHookHandler
 {
@@ -21,8 +19,6 @@ public interface IValidationHookHandler
 /// <summary>
 /// Defines a handler for processing OneSchema validation hook requests with strongly-typed row values.
 /// Implement this interface directly for full control over the validation flow.
-/// For simple per-row validation, inherit from <see cref="RowValidationHookHandler{TValues}"/> instead.
-/// For batch validation, inherit from <see cref="BatchValidationHookHandler{TValues}"/>.
 /// </summary>
 /// <typeparam name="TValues">
 /// A class whose properties map to template column keys.
