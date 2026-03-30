@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Security.Claims;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace OneSchema.AspNetCore.Api;
@@ -6,8 +7,12 @@ namespace OneSchema.AspNetCore.Api;
 /// <summary>
 /// Represents the JSON POST request body sent by OneSchema for an export webhook.
 /// </summary>
-public class ExportWebhookRequest : IOneSchemaWebhookRequest
+public sealed class ExportWebhookRequest : IOneSchemaWebhookRequest
 {
+    /// <inheritdoc />
+    [JsonIgnore]
+    public ClaimsIdentity? Identity { get; set; }
+
     /// <summary>
     /// A unique ID for this webhook request.
     /// </summary>

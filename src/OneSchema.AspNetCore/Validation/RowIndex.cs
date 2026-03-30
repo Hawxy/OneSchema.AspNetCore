@@ -59,15 +59,23 @@ public sealed class RowIndex<TRow, TKey> where TRow : RowBase where TKey : notnu
     /// <param name="results">The result builder to add errors to.</param>
     /// <param name="column">The template column key where the error should be displayed.</param>
     /// <param name="messageFactory">A function that produces the error message from the matched key.</param>
+    /// <param name="suggestions">The list of options to suggest to the user.</param>
     public void ErrorForMatches(
         IEnumerable<TKey> matches,
         ValidationResultBuilder results,
         string column,
-        Func<TKey, string> messageFactory)
+        Func<TKey, string> messageFactory,
+        string[]? suggestions = null
+        )
     {
         foreach (var key in matches)
-            foreach (var row in _lookup[key])
-                results.ForRow(row).Error(column, messageFactory(key));
+        foreach (var row in _lookup[key])
+        {
+            var rowResult = results.ForRow(row).Error(column, messageFactory(key));
+            if (suggestions != null)
+                rowResult.WithSuggestions(suggestions);
+        }
+              
     }
 
     /// <summary>
@@ -78,15 +86,23 @@ public sealed class RowIndex<TRow, TKey> where TRow : RowBase where TKey : notnu
     /// <param name="results">The result builder to add warnings to.</param>
     /// <param name="column">The template column key where the warning should be displayed.</param>
     /// <param name="messageFactory">A function that produces the warning message from the matched key.</param>
+    /// <param name="suggestions">The list of options to suggest to the user.</param>
     public void WarningForMatches(
         IEnumerable<TKey> matches,
         ValidationResultBuilder results,
         string column,
-        Func<TKey, string> messageFactory)
+        Func<TKey, string> messageFactory,
+        string[]? suggestions = null
+        )
     {
         foreach (var key in matches)
-            foreach (var row in _lookup[key])
-                results.ForRow(row).Warning(column, messageFactory(key));
+        foreach (var row in _lookup[key])
+        {
+            var rowResult = results.ForRow(row).Warning(column, messageFactory(key));
+            if (suggestions != null)
+                rowResult.WithSuggestions(suggestions);
+        }
+              
     }
 }
 

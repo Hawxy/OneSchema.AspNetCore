@@ -64,7 +64,7 @@ internal sealed class OneSchemaJwtValidationFilter : IEndpointFilter
             return Results.Unauthorized();
         }
 
-        context.HttpContext.Items[ClaimsPrincipalKey] = result.ClaimsIdentity;
+        webhookRequest.Identity = result.ClaimsIdentity;
 
         return await next(context);
     }

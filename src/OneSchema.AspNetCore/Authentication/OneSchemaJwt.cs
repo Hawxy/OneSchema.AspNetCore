@@ -6,7 +6,7 @@ namespace OneSchema.AspNetCore.Authentication;
 /// <summary>
 /// Helper class for generating JWTs for OneSchema embed sessions.
 /// </summary>
-public static class JwtHelper
+public static class OneSchemaJwt
 {
     /// <summary>
     /// Generates a signed JWT containing an <c>iss</c> claim (client id) and a <c>user_id</c> claim.

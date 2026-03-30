@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 
 namespace OneSchema.AspNetCore.Api;
@@ -7,6 +8,10 @@ namespace OneSchema.AspNetCore.Api;
 /// </summary>
 public abstract class ValidationHookRequestBase : IOneSchemaWebhookRequest
 {
+    /// <inheritdoc />
+    [JsonIgnore]
+    public ClaimsIdentity? Identity { get; set; }
+
     /// <summary>
     /// Ordered array of mapped columns. Used for referencing custom columns.
     /// </summary>
