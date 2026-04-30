@@ -2,6 +2,7 @@ using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
+using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
@@ -55,8 +56,7 @@ class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
-            DotNetTest(_ => _
-                .SetProjectFile(SolutionRoot.GetProject("OneSchema.AspNetCore.Tests")));
+            DotNetTest(_ => _.AddProcessAdditionalArguments("--project", SolutionRoot.GetProject("OneSchema.AspNetCore.Tests")!.Directory));
         });
 
     Target NugetPack => _ => _
