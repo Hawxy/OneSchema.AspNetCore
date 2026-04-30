@@ -189,7 +189,7 @@ app.MapValidationHook<ContactValidationHandler, ContactRow>("/webhooks/validate-
     .RequireOneSchemaJwtValidation();
 ```
 
-3. Generate a JWT to use in your frontend via `OneSchemaJwt.GenerateEmbedToken`.
+3. Generate a JWT to use in your frontend via `OneSchemaJwtContext`.
 
 ```csharp
 app.MapGet("/validation/jwt", (OneSchemaJwtContext ctx, HttpContext httpContext) =>
