@@ -1,5 +1,7 @@
 # OneSchema.AspNetCore
 
+[![NuGet](https://img.shields.io/nuget/v/OneSchema.AspNetCore.svg?style=flat-square)](https://www.nuget.org/packages/OneSchema.AspNetCore)
+
 ASP.NET Core integration for [OneSchema](https://www.oneschema.co/) validation
 webhooks. Provides minimal-API endpoint mapping, strongly-typed row models, optional
 JWT request validation, and helpers for batch lookups against your data store.
@@ -92,7 +94,7 @@ public class ContactValidationHandler : RowValidationHookHandler<ContactRow>
 }
 ```
 
-### Batch validation — `BatchValidationHookHandler<TRow>`
+### Batch validation — `BatchValidationHookHandler/BatchValidationHookHandler<TRow>`
 
 Use when validation requires looking across rows (uniqueness) or talking to an
 external system (DB existence checks). You'll recieve every row in the batch and a
