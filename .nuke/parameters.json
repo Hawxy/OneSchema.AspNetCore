@@ -1,0 +1,4 @@
+{
+  "$schema": "build.schema.json",
+  "SolutionRoot": "OneSchema.AspNetCore.slnx"
+}
