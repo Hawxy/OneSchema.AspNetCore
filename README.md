@@ -14,7 +14,7 @@ Requires .NET 10+
 dotnet add package OneSchema.AspNetCore
 ```
 
-## Quick start
+## Quick Start
 
 The minimal setup is outlined below:
 
@@ -65,13 +65,13 @@ Each handler is bound to its own URL. Configure that URL in the OneSchema dashbo
 as a validation hook for the matching template.
 
 
-## Handler types
+## Handler Types
 
 Handlers come in both dynamic and strongly typed flavors. The non-generic types expose a dictionary of values,
 while the generic handlers types map directly to the template columns. Use whichever
 is most convenient for your use case.
 
-### Per-row validation — `RowValidationHookHandler/RowValidationHookHandler<TRow>`
+### Per-row Validation — `RowValidationHookHandler/RowValidationHookHandler<TRow>`
 
 Use when each row is validated independently. The base class iterates rows for you;
 report errors/warnings on the supplied context.
@@ -94,10 +94,9 @@ public class ContactValidationHandler : RowValidationHookHandler<ContactRow>
 }
 ```
 
-### Batch validation — `BatchValidationHookHandler/BatchValidationHookHandler<TRow>`
+### Batch Validation — `BatchValidationHookHandler/BatchValidationHookHandler<TRow>`
 
-Use when validation requires looking across rows (uniqueness) or talking to an
-external system (DB existence checks). You'll recieve every row in the batch and a
+Use when validation requires looking across rows or batched for querying against an external system (such as a DB). You'll recieve every row in the webhook batch and a
 `ValidationResultBuilder` to attach errors/warnings against specific rows.
 
 ```csharp
@@ -124,7 +123,7 @@ public class ProductUniquenessHandler : BatchValidationHookHandler<ProductRow>
 }
 ```
 
-## Defining a row model
+## Defining a Row Model
 
 To define a strongly typed model, map your OneSchema template columns to a POCO using `JsonPropertyName`:
 
@@ -140,8 +139,8 @@ public class ContactRow
 
 ### Database Lookups - `RowIndex` helper
 
-For bulk lookups involving database queries, use `IndexBy` to build a key -> rows
-index, issue a single batch query, then flag matches in one call:
+For bulk checks involving database queries, use `IndexBy` to build a key -> rows
+index, issue a single batch query, then pass the matching values back to `ErrorForMatches` (or `WarningForMatches`).
 
 ```csharp
 public class ContactEmailExistsHandler : BatchValidationHookHandler<ContactRow>
@@ -169,10 +168,10 @@ public class ContactEmailExistsHandler : BatchValidationHookHandler<ContactRow>
 }
 ```
 
-## JWT validation
+## JWT Validation
 
 OneSchema signs webhook requests with an `embed_user_jwt` field in the request body.
-To enforce signature/issuer/expiration validation:
+To enforce JWT validation:
 
 1. Register your configuration with `AddOneSchemaJwtValidation`.
 2. Chain `.RequireOneSchemaJwtValidation()` on each endpoint that should enforce it.
@@ -188,9 +187,29 @@ app.MapValidationHook<ContactValidationHandler, ContactRow>("/webhooks/validate-
     .RequireOneSchemaJwtValidation();
 ```
 
+3. Generate a JWT to use in your frontend via `OneSchemaJwt.GenerateEmbedToken`.
+
+```csharp
+app.MapGet("/validation/jwt", (IOptions<OneSchemaJwtOptions> options, HttpContext httpContext) =>
+{
+    var optionsValue = options.Value;
+    
+    var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+    var additionalClaims = new Dictionary<string, object>()
+        { { "org-id", httpContext.User.FindFirstValue("org-id")! } };
+    
+    var jwt = OneSchemaJwt.GenerateEmbedToken(optionsValue.ClientId, optionsValue.ClientSecret, userId, additionalClaims);
+
+    return jwt;
+});
+```
+
+The JWT claims are available on the webhook request via `context.Request.Identity`.
+
 Endpoints without `RequireOneSchemaJwtValidation()` accept unsigned requests.
 Invalid or missing tokens produce `401 Unauthorized`.
 
-## Webhook submission
+## Webhook Submission
 
 The `ExportWebhookRequest` type is included for convenience, but no specific abstraction is provided for working with this type. This might change in the future.
