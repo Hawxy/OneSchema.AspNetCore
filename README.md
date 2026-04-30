@@ -123,7 +123,7 @@ public class ProductUniquenessHandler : BatchValidationHookHandler<ProductRow>
 }
 ```
 
-## Defining a Row Model
+### Defining a Row Model
 
 To define a strongly typed model, map your OneSchema template columns to a POCO using `JsonPropertyName`:
 
