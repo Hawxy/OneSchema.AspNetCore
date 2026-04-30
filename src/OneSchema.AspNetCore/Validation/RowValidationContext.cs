@@ -4,8 +4,6 @@ namespace OneSchema.AspNetCore.Validation;
 
 /// <summary>
 /// Provides convenient access to a single row's data and methods to report validation results.
-/// Passed to <see cref="RowValidationHookHandler.ValidateRow"/> and
-/// <see cref="RowValidationHookHandler.ValidateRowAsync"/>.
 /// </summary>
 public class RowValidationContext
 {

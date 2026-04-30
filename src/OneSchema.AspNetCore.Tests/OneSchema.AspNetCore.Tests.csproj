@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Alba" Version="8.5.0" />
-      <PackageReference Include="TUnit" Version="1.21.6" />
+      <PackageReference Include="Alba" Version="8.5.2" />
+      <PackageReference Include="TUnit" Version="1.41.0" />
     </ItemGroup>
 
     <ItemGroup>

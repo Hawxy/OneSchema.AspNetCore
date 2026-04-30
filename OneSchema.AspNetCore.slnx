@@ -1,0 +1,9 @@
+﻿<Solution>
+  <Folder Name="/Solution/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="src/OneSchema.AspNetCore.Tests/OneSchema.AspNetCore.Tests.csproj" />
+  <Project Path="src/OneSchema.AspNetCore/OneSchema.AspNetCore.csproj" />
+  <Project Path="src/OneSchemaSandbox/OneSchemaSandbox.csproj" />
+
+</Solution>

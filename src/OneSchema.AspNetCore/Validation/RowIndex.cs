@@ -122,7 +122,7 @@ public static class RowIndexExtensions
     /// </code>
     /// </example>
     public static RowIndex<Row, TKey> IndexBy<TKey>(
-        this Row[] rows,
+        this IEnumerable<Row> rows,
         Func<Row, TKey> keySelector,
         IEqualityComparer<TKey>? comparer = null) where TKey : notnull
     {
@@ -142,7 +142,7 @@ public static class RowIndexExtensions
     /// </code>
     /// </example>
     public static RowIndex<Row<TValues>, TKey> IndexBy<TValues, TKey>(
-        this Row<TValues>[] rows,
+        this IEnumerable<Row<TValues>> rows,
         Func<TValues, TKey> keySelector,
         IEqualityComparer<TKey>? comparer = null)
         where TValues : class

@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.Extensions.Options;
 using OneSchema.AspNetCore.Authentication;
 using OneSchema.AspNetCore.Validation;
 using OneSchemaSandbox.Handlers;
@@ -7,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Register handlers
 builder.Services.AddValidationHookHandler<ContactValidationHandler, ContactRow>();
 builder.Services.AddValidationHookHandler<ProductUniquenessHandler, ProductRow>();
+builder.Services.AddValidationHookHandler<ContactEmailExistsHandler, ContactRow>();
 
 // Configure optional JWT validation
 builder.Services.AddOneSchemaJwtValidation(opts =>
@@ -22,6 +25,22 @@ app.MapValidationHook<ContactValidationHandler, ContactRow>("/webhooks/validate-
     .RequireOneSchemaJwtValidation();
 
 app.MapValidationHook<ProductUniquenessHandler, ProductRow>("/webhooks/validate-products");
+
+app.MapValidationHook<ContactEmailExistsHandler, ContactRow>("/webhooks/validate-contacts-exists");
+
+app.MapGet("/validation/jwt", (IOptions<OneSchemaJwtOptions> options, HttpContext httpContext) =>
+{
+    var optionsValue = options.Value;
+    
+    var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+    var additionalClaims = new Dictionary<string, object>()
+        { { "org-id", httpContext.User.FindFirstValue("org-id")! } };
+    
+    var jwt = OneSchemaJwt.GenerateEmbedToken(optionsValue.ClientId, optionsValue.ClientSecret, userId, additionalClaims);
+
+    return jwt;
+});
 
 app.Run();
 
