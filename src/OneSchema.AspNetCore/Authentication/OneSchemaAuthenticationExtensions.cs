@@ -41,6 +41,7 @@ public static class OneSchemaAuthenticationExtensions
         this IServiceCollection services,
         Action<OneSchemaJwtOptions> configure)
     {
+        services.AddSingleton<OneSchemaJwtContext>();
         services.Configure(configure);
         return services;
     }

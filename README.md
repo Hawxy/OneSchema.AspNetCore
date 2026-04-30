@@ -171,6 +171,8 @@ public class ContactEmailExistsHandler : BatchValidationHookHandler<ContactRow>
 ## JWT Validation
 
 OneSchema signs webhook requests with an `embed_user_jwt` field in the request body.
+If present, the JWT claims are available on the webhook request via `context.Request.Identity`.
+
 To enforce JWT validation:
 
 1. Register your configuration with `AddOneSchemaJwtValidation`.
@@ -190,22 +192,17 @@ app.MapValidationHook<ContactValidationHandler, ContactRow>("/webhooks/validate-
 3. Generate a JWT to use in your frontend via `OneSchemaJwt.GenerateEmbedToken`.
 
 ```csharp
-app.MapGet("/validation/jwt", (IOptions<OneSchemaJwtOptions> options, HttpContext httpContext) =>
+app.MapGet("/validation/jwt", (OneSchemaJwtContext ctx, HttpContext httpContext) =>
 {
-    var optionsValue = options.Value;
-    
     var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
     var additionalClaims = new Dictionary<string, object>()
         { { "org-id", httpContext.User.FindFirstValue("org-id")! } };
     
-    var jwt = OneSchemaJwt.GenerateEmbedToken(optionsValue.ClientId, optionsValue.ClientSecret, userId, additionalClaims);
-
-    return jwt;
+    return ctx.GenerateEmbedToken(userId, additionalClaims);
 });
-```
 
-The JWT claims are available on the webhook request via `context.Request.Identity`.
+```
 
 Endpoints without `RequireOneSchemaJwtValidation()` accept unsigned requests.
 Invalid or missing tokens produce `401 Unauthorized`.

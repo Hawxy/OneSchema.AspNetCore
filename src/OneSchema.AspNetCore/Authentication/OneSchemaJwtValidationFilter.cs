@@ -29,18 +29,11 @@ namespace OneSchema.AspNetCore.Authentication;
 /// </summary>
 internal sealed class OneSchemaJwtValidationFilter : IEndpointFilter
 {
-    /// <summary>
-    /// The key used to store the validated <see cref="System.Security.Claims.ClaimsPrincipal"/>
-    /// in <see cref="HttpContext.Items"/>.
-    /// </summary>
-    internal const string ClaimsPrincipalKey = "OneSchema:ClaimsPrincipal";
-
     public async ValueTask<object?> InvokeAsync(
         EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {
-        var options = context.HttpContext.RequestServices
-            .GetRequiredService<IOptions<OneSchemaJwtOptions>>().Value;
+        var validator = context.HttpContext.RequestServices.GetRequiredService<OneSchemaJwtContext>();
 
         // Find the IOneSchemaWebhookRequest argument from model binding
         var webhookRequest = FindWebhookRequest(context);
@@ -56,23 +49,8 @@ internal sealed class OneSchemaJwtValidationFilter : IEndpointFilter
         {
             return Results.Unauthorized();
         }
-
-        var key = new SymmetricSecurityKey(
-            System.Text.Encoding.UTF8.GetBytes(options.ClientSecret));
-
-        var validationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = options.ClientId,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-            ClockSkew = options.ClockSkew,
-            IssuerSigningKey = key,
-            ValidateIssuerSigningKey = true
-        };
-
-        var handler = new JsonWebTokenHandler();
-        var result = await handler.ValidateTokenAsync(token, validationParameters);
+        
+        var result = await validator.ValidateTokenAsync(token);
 
         if (!result.IsValid)
         {

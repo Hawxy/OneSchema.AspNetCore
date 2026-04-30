@@ -28,16 +28,14 @@ app.MapValidationHook<ProductUniquenessHandler, ProductRow>("/webhooks/validate-
 
 app.MapValidationHook<ContactEmailExistsHandler, ContactRow>("/webhooks/validate-contacts-exists");
 
-app.MapGet("/validation/jwt", (IOptions<OneSchemaJwtOptions> options, HttpContext httpContext) =>
+app.MapGet("/validation/jwt", (OneSchemaJwtContext ctx, HttpContext httpContext) =>
 {
-    var optionsValue = options.Value;
-    
     var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
     var additionalClaims = new Dictionary<string, object>()
         { { "org-id", httpContext.User.FindFirstValue("org-id")! } };
     
-    var jwt = OneSchemaJwt.GenerateEmbedToken(optionsValue.ClientId, optionsValue.ClientSecret, userId, additionalClaims);
+    var jwt = ctx.GenerateEmbedToken(userId, additionalClaims);
 
     return jwt;
 });

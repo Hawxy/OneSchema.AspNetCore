@@ -22,7 +22,7 @@ namespace OneSchema.AspNetCore.Validation;
 /// Exposes <see cref="Keys"/> for use in batch queries and helper methods
 /// to report errors/warnings for matching keys.
 /// <para>
-/// Create via <see cref="RowIndexExtensions.IndexBy{TKey}(Row[], Func{Row, TKey}, IEqualityComparer{TKey}?)"/>
+/// Create via <see cref="RowIndexExtensions.IndexBy{TRow, TKey}(IEnumerable{TRow}, Func{TRow, TKey}, IEqualityComparer{TKey})"/>
 /// or the strongly-typed overload.
 /// </para>
 /// </summary>
@@ -84,11 +84,14 @@ public sealed class RowIndex<TRow, TKey> where TRow : RowBase where TKey : notnu
         )
     {
         foreach (var key in matches)
-        foreach (var row in _lookup[key])
         {
-            var rowResult = results.ForRow(row).Error(column, messageFactory(key));
-            if (suggestions != null)
-                rowResult.WithSuggestions(suggestions);
+            var message = messageFactory(key);
+            foreach (var row in _lookup[key])
+            {
+                var rowResult = results.ForRow(row).Error(column, message);
+                if (suggestions != null)
+                    rowResult.WithSuggestions(suggestions);
+            }
         }
               
     }
@@ -111,12 +114,16 @@ public sealed class RowIndex<TRow, TKey> where TRow : RowBase where TKey : notnu
         )
     {
         foreach (var key in matches)
-        foreach (var row in _lookup[key])
         {
-            var rowResult = results.ForRow(row).Warning(column, messageFactory(key));
-            if (suggestions != null)
-                rowResult.WithSuggestions(suggestions);
+            var message = messageFactory(key);
+            foreach (var row in _lookup[key])
+            {
+                var rowResult = results.ForRow(row).Warning(column, message);
+                if (suggestions != null)
+                    rowResult.WithSuggestions(suggestions);
+            }
         }
+      
               
     }
 }

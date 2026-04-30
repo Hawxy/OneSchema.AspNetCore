@@ -46,7 +46,7 @@ namespace OneSchema.AspNetCore.Validation.Handlers;
 public abstract class BatchValidationHookHandler : IValidationHookHandler
 {
     /// <inheritdoc />
-    public async Task<ValidationHookResponseItem[]> HandleAsync(
+    public async Task<IReadOnlyList<ValidationHookResponseItem>> HandleAsync(
         ValidationHookRequest request,
         CancellationToken cancellationToken = default)
     {

@@ -26,7 +26,7 @@ public interface IValidationHookHandler
     /// <summary>
     /// Processes the validation hook request and returns validation results.
     /// </summary>
-    Task<ValidationHookResponseItem[]> HandleAsync(
+    Task<IReadOnlyList<ValidationHookResponseItem>> HandleAsync(
         ValidationHookRequest request,
         CancellationToken cancellationToken = default);
 }
@@ -44,7 +44,7 @@ public interface IValidationHookHandler<TValues> where TValues : class
     /// <summary>
     /// Processes the strongly-typed validation hook request and returns validation results.
     /// </summary>
-    Task<ValidationHookResponseItem[]> HandleAsync(
+    Task<IReadOnlyList<ValidationHookResponseItem>> HandleAsync(
         ValidationHookRequest<TValues> request,
         CancellationToken cancellationToken = default);
 }

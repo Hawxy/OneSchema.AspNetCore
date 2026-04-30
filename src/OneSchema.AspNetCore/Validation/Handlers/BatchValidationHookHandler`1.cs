@@ -57,7 +57,7 @@ public abstract class BatchValidationHookHandler<TValues> : IValidationHookHandl
     where TValues : class
 {
     /// <inheritdoc />
-    public async Task<ValidationHookResponseItem[]> HandleAsync(
+    public async Task<IReadOnlyList<ValidationHookResponseItem>> HandleAsync(
         ValidationHookRequest<TValues> request,
         CancellationToken cancellationToken = default)
     {

@@ -40,7 +40,7 @@ namespace OneSchema.AspNetCore.Validation;
 /// </code>
 /// </para>
 /// </summary>
-public class ValidationResultBuilder
+public sealed class ValidationResultBuilder
 {
     private readonly List<ValidationHookResponseItem> _items = [];
 
@@ -57,7 +57,7 @@ public class ValidationResultBuilder
     /// <summary>
     /// Builds the final array of <see cref="ValidationHookResponseItem"/> to return as the response.
     /// </summary>
-    public ValidationHookResponseItem[] Build() => [.. _items];
+    public IReadOnlyList<ValidationHookResponseItem> Build() => _items;
 
     /// <summary>
     /// Returns <c>true</c> if no errors or warnings have been added.
@@ -76,7 +76,7 @@ public class ValidationResultBuilder
 /// Builder scoped to a single row for adding errors and warnings with optional modifiers.
 /// All methods return <c>this</c> for fluent chaining.
 /// </summary>
-public class RowResultBuilder
+public sealed class RowResultBuilder
 {
     private readonly ValidationResultBuilder _parent;
     private readonly int _rowId;
@@ -118,7 +118,7 @@ public class RowResultBuilder
     /// Attaches multiple suggested replacement values to the last added error or warning.
     /// The user may choose from any of the suggestions.
     /// </summary>
-    public RowResultBuilder WithSuggestions(params string[] suggestions)
+    public RowResultBuilder WithSuggestions(string[] suggestions)
     {
         EnsureLastItem();
         _lastItem.Suggestion = suggestions;
