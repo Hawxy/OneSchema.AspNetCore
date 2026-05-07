@@ -44,16 +44,14 @@ app.MapValidationHook<ContactValidationHandler, ContactRow>("/webhooks/validate-
 app.MapValidationHook<ProductUniquenessHandler, ProductRow>("/webhooks/validate-products");
 
 // 4. Generate a JWT to send to OneSchema (optional, required if using JWT validation).
-app.MapGet("/validation/jwt", (IOptions<OneSchemaJwtOptions> options, HttpContext httpContext) =>
-{
-    var optionsValue = options.Value;
-    
+app.MapGet("/validation/jwt", (OneSchemaJwtContext jwtContext, HttpContext httpContext) =>
+{    
     var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
     var additionalClaims = new Dictionary<string, object>()
         { { "org-id", httpContext.User.FindFirstValue("org-id")! } };
     
-    var jwt = OneSchemaJwt.GenerateEmbedToken(optionsValue.ClientId, optionsValue.ClientSecret, userId, additionalClaims);
+    var jwt = jwtContext.GenerateEmbedToken(userId, additionalClaims);
 
     return jwt;
 });
